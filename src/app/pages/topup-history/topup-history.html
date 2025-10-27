@@ -1,0 +1,64 @@
+<div class="history-wrap" *ngIf="!loading; else loadingTpl">
+  <div class="head-row">
+    <h1 class="title">ประวัติธุรกรรม</h1>
+
+    <div class="filters">
+      <button type="button"
+              class="pill"
+              [class.active]="filter==='all'"
+              (click)="setFilter('all')">ทั้งหมด</button>
+      <button type="button"
+              class="pill"
+              [class.active]="filter==='topup'"
+              (click)="setFilter('topup')">เฉพาะเติมเงิน</button>
+      <button type="button"
+              class="pill"
+              [class.active]="filter==='purchase'"
+              (click)="setFilter('purchase')">เฉพาะซื้อเกม</button>
+    </div>
+  </div>
+
+  <!-- รายการธุรกรรม -->
+  <div class="list" *ngIf="filtered.length; else emptyTpl">
+    <div class="tx-card" *ngFor="let t of filtered; trackBy: trackById">
+      <div class="icon">
+        <span *ngIf="t.type==='topup'">💸</span>
+        <span *ngIf="t.type==='purchase'">🕹️</span>
+      </div>
+
+      <div class="mid">
+        <div class="row1">
+          <span class="badge" [class.badge-green]="t.type==='topup'" [class.badge-blue]="t.type==='purchase'">
+            {{ t.type==='topup' ? 'เติมเงิน' : 'ซื้อเกม' }}
+          </span>
+        </div>
+        <div class="row2" *ngIf="t.detail">
+          {{ t.detail }}
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="amount" [class.plus]="t.type==='topup'" [class.minus]="t.type==='purchase'">
+          {{ (t.amount||0) | number:'1.0-0' }} ฿
+        </div>
+        <div class="status">สำเร็จ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- สรุปรวม -->
+  <div class="summary" *ngIf="filtered.length">
+    <div class="label">ยอดรวม (เฉพาะเติมเงิน):</div>
+    <div class="total">{{ totalTopup | number:'1.0-0' }} ฿</div>
+  </div>
+</div>
+
+<!-- Loading -->
+<ng-template #loadingTpl>
+  <div class="loading">กำลังโหลดประวัติธุรกรรม…</div>
+</ng-template>
+
+<!-- Empty -->
+<ng-template #emptyTpl>
+  <div class="empty">ยังไม่มีรายการธุรกรรม</div>
+</ng-template>

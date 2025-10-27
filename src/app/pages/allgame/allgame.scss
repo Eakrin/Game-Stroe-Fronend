@@ -1,0 +1,127 @@
+:host { display:block; position:relative; }
+
+/* พื้นหลังแบบภาพ + เลเยอร์ทึบ */
+.container{
+  min-height:100vh;
+  position:relative;
+  padding:40px 16px 64px;
+  background:
+    radial-gradient(1200px 600px at 20% -10%, #372668 0%, #1b1236 45%, #120a26 100%),
+    url('/images/Bg.png') center/cover no-repeat fixed;
+  /* ทำให้ ::before อยู่ในสแต็กเดียวกันเสมอ */
+  isolation: isolate;    /* สำคัญมาก */
+}
+.container::before{
+  content:'';
+  position:absolute; inset:0;
+  background:rgba(20,16,35,.78);
+  z-index:0;
+}
+
+/* คอนเทนต์ต้องอยู่เหนือเลเยอร์ */
+.hero, .ranking-section, .empty, .card { position:relative; z-index:1; }
+
+/* จุดตกแต่ง */
+.decorative-dots{
+  position:absolute; top:16px; left:16px; z-index:0;
+  display:grid; grid-template-columns:repeat(3,8px); gap:8px; opacity:.5;
+  span{ width:8px; height:8px; background:#ff6b9d; border-radius:50%; }
+}
+
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  padding: 24px 12px 10px;
+
+  .logo { width:140px; height:auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,.35)); }
+  .title { margin-top:10px; font-size:44px; font-weight:800; color:#fff; letter-spacing:.5px; text-shadow:0 4px 28px rgba(0,0,0,.35); }
+  .subtitle { color:#e8e6ff; opacity:.95; margin-top:6px; }
+  .description { color:#c9c7df; margin-top:2px; font-size:14px; }
+
+  .search{
+    display:inline-flex; align-items:center; gap:10px; margin-top:14px;
+    input{
+      width:320px; padding:10px 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08);
+      color:#fff; outline:none; transition: box-shadow .2s, border-color .2s;
+      &::placeholder{ color:#bfbfde; }
+      &:focus{ border-color:#a78bfa; box-shadow:0 0 0 4px rgba(167,139,250,.15); }
+    }
+    .result-count{ color:#e9e9ff; opacity:.9; font-size:14px; }
+  }
+}
+
+/* ===== รายการเกม ===== */
+.ranking-section{
+  max-width:1200px; margin:0 auto; padding: 12px 12px 0;
+
+  .section-title{
+    font-size:28px; font-weight:700; color:#fff; margin:22px 0 18px;
+    &::after{
+      content:''; display:block; width:56px; height:3px; margin-top:8px;
+      border-radius:999px; background:linear-gradient(90deg,#8b5cf6,#4facfe);
+    }
+  }
+
+  .game-grid{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:18px;
+    @media (max-width:1100px){ grid-template-columns:repeat(4,1fr); }
+    @media (max-width:900px){  grid-template-columns:repeat(3,1fr); }
+    @media (max-width:680px){  grid-template-columns:repeat(2,1fr); }
+    @media (max-width:430px){  grid-template-columns:1fr; }
+  }
+
+  .game-card{
+    appearance:none; border:0; text-align:left; cursor:pointer;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    padding:14px; border-radius:16px; backdrop-filter: blur(8px);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+
+    &:hover{ transform: translateY(-4px); border-color:#8b5cf6; box-shadow:0 10px 26px rgba(139,92,246,.28); }
+
+    .game-icon{
+      width:100%; height:140px; border-radius:12px; overflow:hidden;
+      background:linear-gradient(135deg,#6b7cff,#a78bfa);
+      img{ width:100%; height:100%; object-fit:cover; display:block; }
+    }
+    .game-name{ margin-top:10px; font-weight:700; color:#fff; font-size:16px; line-height:1.35; }
+    .game-status{ margin-top:4px; font-size:13px; color:#c9c7df; }
+  }
+}
+
+/* ไม่มีผลลัพธ์ */
+.empty{ color:#fff; opacity:.9; text-align:center; margin:16px 0 8px; }
+
+/* ===== สไตล์หน้า detail (ถ้าใช้ร่วม) ===== */
+.card{
+  max-width:980px; margin:40px auto; background:rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35); color:#fff;
+}
+.btn-back{
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
+  color:#fff; padding:8px 12px; border-radius:10px; cursor:pointer; margin-bottom:12px;
+}
+.header-row{ display:flex; justify-content:space-between; align-items:center; gap:12px;
+  .title{ font-size:28px; font-weight:800; letter-spacing:.5px; }
+  .sold{ opacity:.9; font-weight:700; }
+}
+.content-row{
+  margin-top:10px; display:grid; grid-template-columns:180px 1fr; gap:18px;
+  @media (max-width:760px){ grid-template-columns:1fr; }
+  .thumb{ width:180px; height:180px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.1);
+    img{ width:100%; height:100%; object-fit:cover; display:block; }
+    @media (max-width:760px){ width:100%; height:200px; }
+  }
+  .info{
+    .price{ font-size:18px; font-weight:800; margin-bottom:6px; }
+    .desc{ color:#e8e8f6; opacity:.9; line-height:1.6; margin:8px 0 10px; }
+    .meta{ display:grid; gap:6px; color:#e9e9ff; }
+    .actions{ margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; }
+  }
+}
+.btn{ font:inherit; padding:10px 18px; border-radius:12px; border:1px solid transparent; cursor:pointer; color:#fff;
+  &.btn-primary{ background:#8b5cf6; border-color:#8b5cf6; box-shadow:0 0 18px rgba(139,92,246,.35); }
+  &.btn-ghost{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.18); }
+}

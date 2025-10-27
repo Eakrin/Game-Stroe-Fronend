@@ -1,0 +1,78 @@
+<div class="admin-tx-container" *ngIf="!loading; else loadingTpl">
+  <!-- หัวข้อ + ฟิลเตอร์ -->
+  <div class="head">
+    <h1 class="title">ธุรกรรมทั้งหมด (Admin)</h1>
+
+    <div class="filters">
+      <div class="filter">
+        <label>ผู้ใช้</label>
+        <select [(ngModel)]="userFilter" (change)="applyFilters()">
+          <option value="all">ผู้ค้าทุกคน</option>
+          <option *ngFor="let u of users" [value]="u.id">
+            {{ u.name || 'Unknown' }} • {{ u.email || '-' }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter">
+        <label>ประเภท</label>
+        <select [(ngModel)]="typeFilter" (change)="applyFilters()">
+          <option value="all">ทั้งหมด</option>
+          <option value="topup">เติมเงิน</option>
+          <option value="purchase">ซื้อเกม</option>
+        </select>
+      </div>
+
+      <div class="filter">
+        <label>ค้นหา</label>
+        <input
+          type="text"
+          placeholder="ชื่อ/อีเมล/รายละเอียด..."
+          [(ngModel)]="keyword"
+          (input)="applyFilters()"
+        />
+      </div>
+    </div>
+
+    <div class="summary" *ngIf="!loading">
+      <div>ทั้งหมด: <b>{{ filtered.length | number }}</b> รายการ</div>
+      <div>เติมเงิน: <b class="green">{{ sumByType.topup | number:'1.0-0' }}</b></div>
+      <div>ซื้อเกม: <b class="red">-{{ sumByType.purchase | number:'1.0-0' }}</b></div>
+    </div>
+  </div>
+
+  <!-- รายการธุรกรรม -->
+  <div class="list" *ngIf="filtered.length; else emptyTpl">
+    <div class="tx-row" *ngFor="let t of filtered; trackBy: trackById">
+      <div class="c when">
+        {{ toDate(t.createdAt) | date:'yyyy-MM-dd HH:mm' }}
+      </div>
+      <div class="c user">
+        <div class="name">{{ t.userName || 'Unknown User' }}</div>
+        <div class="email">{{ t.userEmail || '-' }}</div>
+      </div>
+      <div class="c type">
+        <span class="badge"
+              [class.badge-green]="t.type==='topup'"
+              [class.badge-blue]="t.type==='purchase'"
+              [class.badge-amber]="t.type==='withdraw'">
+          {{ typeLabel(t.type) }}
+        </span>
+      </div>
+      <div class="c detail">
+        {{ t.detail || '-' }}
+      </div>
+      <div class="c amount" [class.plus]="t.type==='topup'" [class.minus]="t.type!=='topup'">
+        {{ (t.type==='topup' ? t.amount : -t.amount) | number:'1.0-0' }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">กำลังโหลดข้อมูลธุรกรรม…</div>
+</ng-template>
+
+<ng-template #emptyTpl>
+  <div class="empty">ยังไม่มีธุรกรรมตามเงื่อนไขที่เลือก</div>
+</ng-template>

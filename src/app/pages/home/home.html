@@ -8,53 +8,33 @@
     <p class="subtitle">พร้อมให้คุณลุยทุกเวลา</p>
     <br>
     <div class="search-box">
-      <button class="btn-all-games" >เกมทั้งหมด</button>
+      <button class="btn-all-games" (click)="goAllGames()">เกมทั้งหมด</button>
     </div>
   </section>
 
   <!-- Ranking Section -->
   <section class="ranking-section">
     <h2 class="section-title">Ranking</h2>
-    <div class="game-grid">
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/valorant.png" alt="Valorant">
-        </div>
-        <p class="game-name">Valorant</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
 
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/cod.png" alt="Call of Duty">
-        </div>
-        <p class="game-name">Call of Duty</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
+    <div *ngIf="loading" style="color:#fff; opacity:.9; margin:8px 0 18px;">
+      กำลังโหลด…
+    </div>
 
-      <div class="game-card">
+    <div class="game-grid" *ngIf="!loading">
+      <button
+        class="game-card"
+        *ngFor="let g of top; trackBy: trackById"
+        type="button"
+        (click)="goGameDetail(g)"
+      >
         <div class="game-icon">
-          <img src="assets/games/fivem.png" alt="Five M">
+          <img [src]="g.imageUrl || '/images/true.png'" [alt]="g.name" />
         </div>
-        <p class="game-name">Five M</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
-
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/roblox.png" alt="Roblox">
-        </div>
-        <p class="game-name">Roblox</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
-
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/reddead2.png" alt="Red Dead II">
-        </div>
-        <p class="game-name">Red Dead II</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
+        <p class="game-name">{{ g.name }}</p>
+        <p class="game-status">
+          
+        </p>
+      </button>
     </div>
   </section>
 

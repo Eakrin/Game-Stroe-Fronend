@@ -1,25 +1,145 @@
-.admin-message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: #fff;
-  background: linear-gradient(90deg, #8b5cf6, #43e97b, #8b5cf6);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  padding: 32px 48px;
-  border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.18);
-  animation: gradient-move 2.5s linear infinite;
-  user-select: none;
+// พื้นหลังหลัก + เก็บโทนให้เหมือนภาพ
+.admin-container {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  padding: 24px 20px 60px;
+  background-image: url('/images/Bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow-x: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(26, 11, 46, 0.9) 0%, rgba(45, 27, 78, 0.85) 55%, rgba(26, 11, 46, 0.92) 100%);
+    z-index: 0;
+  }
 }
 
-@keyframes gradient-move {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+:host, .admin-container * { box-sizing: border-box; }
+.admin-container { font-family: "Kanit", sans-serif; color: #fff; }
+.admin-container > * { position: relative; z-index: 1; }
+
+// จุดประดับมุมซ้ายบน
+.decorative-dots {
+  position: absolute;
+  top: 24px; left: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 8px);
+  gap: 8px;
+  opacity: .5; z-index: 0;
+
+  span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ff6b9d;
+  }
+}
+
+// Header โปรไฟล์ + ยอดเงิน
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+.profile {
+  display: flex; align-items: center; gap: 14px;
+
+  .avatar {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    display: grid; place-items: center;
+    overflow: hidden;
+    &.placeholder span { font-size: 26px; }
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  .meta {
+    .label { font-size: 12px; color: #cfcfe8; }
+    .value { font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; }
+  }
+}
+
+.balance {
+  text-align: right;
+  .label { font-size: 12px; color: #cfcfe8; }
+  .value { font-size: 18px; font-weight: 800; color: #fff; margin-top: 2px; }
+}
+
+// Title
+.page-title {
+  text-align: center;
+  margin: 28px auto 26px;
+  font-size: 48px;
+  font-weight: 800;
+  text-shadow: 0 6px 18px rgba(0,0,0,.4);
+}
+
+// Grid ปุ่มเมนู
+.tile-grid {
+  max-width: 920px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 220px);
+  grid-auto-rows: minmax(180px, auto);
+  gap: 28px 48px;
+  justify-content: center;
+
+  // ให้แผงสุดท้ายอยู่ตรงกลางถ้าเหลือคี่
+  &::after {
+    content: '';
+    width: 220px;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    &::after { display: none; }
+  }
+}
+
+.tile {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(16, 8, 28, .55);
+  border-radius: 16px;
+  padding: 26px 22px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .25s ease;
+  outline: none;
+  position: relative;
+  box-shadow: 0 8px 26px rgba(0,0,0,.25);
+
+  &:hover { transform: translateY(-6px); border-color: #8b5cf6; box-shadow: 0 14px 36px rgba(139,92,246,.35); }
+  &:active { transform: translateY(-2px); }
+
+  &.disabled { opacity: .55; cursor: not-allowed;
+    &:hover { transform: none; border-color: rgba(255,255,255,.15); box-shadow: 0 8px 26px rgba(0,0,0,.25); }
+  }
+
+  .tile-icon {
+    width: 84px; height: 84px; border-radius: 18px;
+    margin: 0 auto 12px;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+
+    img { width: 56px; height: 56px; object-fit: contain; filter: invert(1); }
+  }
+
+  .tile-title {
+    font-size: 18px; font-weight: 700; color: #fff;
+  }
+
+  .tile-sub {
+    margin-top: 4px; color: #c9c9d6; font-size: 13px;
+  }
 }

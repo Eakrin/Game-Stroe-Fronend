@@ -34,7 +34,7 @@ export class Register {
     }
 
     // ✅ ส่งข้อมูลไปที่ Node.js Backend
-    this.http.post('http://localhost:3000/register', {
+    this.http.post('http://localhost:3200/register', {
       name: this.formData.name,
       email: this.formData.email,
       password: this.formData.password,

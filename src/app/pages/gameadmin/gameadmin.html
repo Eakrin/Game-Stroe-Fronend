@@ -1,0 +1,97 @@
+<div class="container">
+  <!-- แถวควบคุม -->
+  <div class="toolbar">
+    <button class="btn btn-primary" (click)="openCreate()" type="button">
+      Add Game
+    </button>
+
+    <div class="count">เกมทั้งหมด : {{ filtered.length }}</div>
+
+    <div class="search">
+      <input
+        type="text"
+        placeholder="ค้นหา..."
+        [(ngModel)]="keyword"
+      />
+      <span class="icon">🔎</span>
+    </div>
+  </div>
+
+  <!-- รายการเกม -->
+  <div class="list" *ngIf="!loading; else loadingTpl">
+    <div class="card" *ngFor="let g of filtered">
+      <div class="left">
+        <div class="thumb">
+          <img [src]="g.imageUrl || '/images/true.png'" alt="" />
+        </div>
+        <div class="name">{{ g.name }}</div>
+      </div>
+
+      <div class="right">
+        <button class="btn btn-ghost" (click)="openEdit(g)">Edit</button>
+        <button class="btn btn-danger" (click)="onDelete(g)">Delete</button>
+      </div>
+    </div>
+
+    <div *ngIf="filtered.length === 0" class="empty">ไม่พบเกมที่ค้นหา</div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading">กำลังโหลด…</div>
+  </ng-template>
+</div>
+
+<!-- Modal Add/Edit -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal" *ngIf="showModal">
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+    <h2>{{ mode === 'create' ? 'เพิ่มเกม' : 'แก้ไขเกม' }}</h2>
+
+    <label class="field">
+      <span>ชื่อเกม *</span>
+      <input type="text" [(ngModel)]="form.name" name="name" required />
+    </label>
+
+    <div class="grid-2">
+      <label class="field">
+        <span>ราคา *</span>
+        <input type="number" [(ngModel)]="form.price" name="price" min="0" required />
+      </label>
+
+      <label class="field">
+        <span>ประเภท *</span>
+        <select [(ngModel)]="form.category" name="category" required>
+          <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+        </select>
+      </label>
+    </div>
+
+    <label class="field">
+      <span>คำอธิบาย</span>
+      <textarea [(ngModel)]="form.description" name="description" rows="3"></textarea>
+    </label>
+
+    <!-- ✅ ทั้ง create/edit: เลือกไฟล์ หรือ ใส่ URL ได้ -->
+    <div class="grid-2">
+      <label class="field">
+        <span>อัปโหลดรูป (ไฟล์)</span>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+        <small style="color:#b9b9d6">* ถ้าเลือกไฟล์ จะใช้ไฟล์แทน URL อัตโนมัติ</small>
+      </label>
+
+      <label class="field">
+        <span>หรือใส่รูปเป็น URL</span>
+        <input type="text" [(ngModel)]="form.imageUrl" name="imageUrl" placeholder="https://..." />
+      </label>
+    </div>
+
+    <div class="preview" *ngIf="previewUrl || form.imageUrl">
+      <img [src]="previewUrl || form.imageUrl" alt="preview" />
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-primary" [disabled]="f.invalid">{{ mode === 'create' ? 'Add' : 'Save' }}</button>
+    </div>
+  </form>
+</div>

@@ -1,7 +1,9 @@
+// profile.ts
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 type Game = { id: number; title: string; cover: string };
 
@@ -13,67 +15,56 @@ type Game = { id: number; title: string; cover: string };
   styleUrls: ['./profile.scss'],
 })
 export class Profile implements OnInit {
+  private baseUrl = 'http://localhost:3200';
+
   user: any = null;
   loading = true;
+  balance = 0;
 
-  games: Game[] = [
-    { id: 1, title: 'Roblox', cover: '/images/games/roblox.png' },
-    { id: 2, title: 'Five M', cover: '/images/games/fivem.png' },
-    { id: 3, title: 'FC 25', cover: '/images/games/fc25.jpg' },
-    { id: 4, title: 'Red Dead II', cover: '/images/games/rdr2.jpg' },
-    { id: 5, title: 'Valorant', cover: '/images/games/valorant.png' },
-    { id: 6, title: 'Call of Duty', cover: '/images/games/cod.jpg' },
-    { id: 7, title: 'GROUNDED', cover: '/images/games/grounded.jpg' },
-    { id: 8, title: 'GROUNDED 2', cover: '/images/games/grounded2.jpg' },
-  ];
+  games: Game[] = [ /* ...เดิม... */ ];
 
   constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit() {
     const storedUser = localStorage.getItem('user');
-
     if (!storedUser) {
       alert('กรุณาเข้าสู่ระบบก่อน');
       this.router.navigate(['/login']);
       return;
     }
+    const u = JSON.parse(storedUser);
 
-    const user = JSON.parse(storedUser);
-    console.log('📦 ดึงข้อมูลจาก localStorage:', user);
+    // โหลดโปรไฟล์
+    this.http.get(`${this.baseUrl}/profile/${u.id}`).subscribe({
+      next: (res: any) => { this.user = res.user; this.loading = false; },
+      error: () => { alert('โหลดข้อมูลไม่สำเร็จ ❌'); this.loading = false; },
+    });
 
-    // ✅ เรียกข้อมูลจริงจาก Node.js
-    this.http.get(`http://localhost:3000/profile/${user.id}`).subscribe({
-      next: (res: any) => {
-        this.user = res.user;
-        this.loading = false;
-        console.log('✅ โหลดโปรไฟล์สำเร็จ:', this.user);
-      },
-      error: (err) => {
-        console.error('❌ โหลดข้อมูลไม่สำเร็จ:', err);
-        alert('โหลดข้อมูลไม่สำเร็จ ❌');
-        this.loading = false;
-      },
+    // ถ้ามี state จากหน้า Topup ให้ตั้งค่าก่อน
+    const stateBal = history.state?.balance;
+    if (typeof stateBal === 'number') this.balance = stateBal;
+
+    // ดึงยอดล่าสุดจาก backend เพื่อความถูกต้อง
+    this.fetchWallet(u.id);
+
+    // กันกรณี Angular reuse component: ถ้ากลับมาหน้านี้อีกครั้ง ให้ดึงยอดใหม่อีกรอบ
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
+      const userNow = JSON.parse(localStorage.getItem('user') || '{}');
+      if (userNow?.id) this.fetchWallet(userNow.id);
     });
   }
 
-  goTopup() {
-    this.router.navigate(['/profile/topup']);
+  private fetchWallet(userId: string) {
+    this.http.get<any>(`${this.baseUrl}/wallet/${userId}`).subscribe({
+      next: (w) => this.balance = Number(w?.balance ?? 0),
+      error: () => this.balance = 0,
+    });
   }
 
-  goPurchaseHistory() {
-    this.router.navigate(['/orders']);
-  }
-
-  goTopupHistory() {
-    this.router.navigate(['/wallet/history']);
-  }
-
-  openGameDetail(g: Game) {
-    this.router.navigate(['/games', g.id]);
-  }
-
-  openEditProfile() {
-    this.router.navigate(['/profile/edit']);
-    console.log('📝 เปิดหน้าแก้ไขโปรไฟล์');
-  }
+  goTopup() { this.router.navigate(['/profile/topup']); }
+  goPurchaseHistory() { this.router.navigate(['/profile/purchasehistory']); }
+  goTopupHistory() { this.router.navigate(['/profile/history']); }
+  openGameDetail(g: Game) { this.router.navigate(['/games', g.id]); }
+  openEditProfile() { this.router.navigate(['/profile/edit']); }
+  goLibrary() { this.router.navigate(['/profile/library']); }
 }

@@ -1,0 +1,61 @@
+<div class="container" *ngIf="!loading && game">
+  <div class="decorative-dots">
+    <span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="card">
+    <button class="btn-back" type="button" (click)="back()">ย้อนกลับ</button>
+
+    <div class="header-row">
+      <h1 class="title">{{ game!.name }}</h1>
+      <div class="sold" *ngIf="game?.sold">ยอดขาย {{ game!.sold | number }}</div>
+    </div>
+
+    <div class="content-row">
+      <div class="thumb">
+        <img [src]="game!.imageUrl || '/images/true.png'" [alt]="game!.name" />
+      </div>
+
+      <div class="info">
+        <div class="price">Price : {{ game!.price | number:'1.0-0' }} B</div>
+
+        <div class="desc" *ngIf="game!.description">{{ game!.description }}</div>
+
+        <div class="meta">
+          <div><b>Type :</b> {{ game!.category || 'ไม่ระบุ' }}</div>
+
+          <!-- ✅ แสดงวันที่วางขาย (แปลงเป็น Date แล้วค่อยส่งเข้า date pipe) -->
+          <div *ngIf="asDate(game?.releaseDate) as rd">
+            <b>Release :</b> {{ rd | date:'dd/MM/yyyy' }}
+          </div>
+        </div>
+
+        <div class="actions">
+          <button
+            class="btn btn-primary"
+            type="button"
+            [disabled]="buying"
+            (click)="purchaseGame(game!)">
+            {{ buying ? 'กำลังสั่งซื้อ...' : 'สั่งซื้อทันที' }}
+          </button>
+         <button
+  class="btn btn-ghost"
+  type="button"
+  [disabled]="adding"
+  (click)="addToCart(game!)">
+  {{ adding ? 'กำลังเพิ่ม…' : 'เพิ่มลงตะกร้า' }}
+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" style="color:#fff;opacity:.9;text-align:center;margin:40px 0;">
+  กำลังโหลด…
+</div>
+<div *ngIf="!loading && !game" style="color:#fff;opacity:.9;text-align:center;margin:40px 0;">
+  ไม่พบเกมนี้
+</div>

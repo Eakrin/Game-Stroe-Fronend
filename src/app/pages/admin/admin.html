@@ -1,2 +1,47 @@
-<p class ='admin-message'>admin works!</p>
+<div class="admin-container">
+  <!-- ลวดลายประกอบ -->
+  <div class="decorative-dots">
+    <span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+  </div>
 
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="profile">
+      <div class="avatar" [class.placeholder]="!admin.avatarUrl">
+        <img *ngIf="admin.avatarUrl" [src]="admin.avatarUrl" alt="avatar" />
+        <span *ngIf="!admin.avatarUrl">👤</span>
+      </div>
+      <div class="meta">
+        <div class="label">Name</div>
+        <div class="value">{{ admin.name }}</div>
+      </div>
+    </div>
+
+    <div class="balance">
+      <div class="label">Balance</div>
+      <div class="value">{{ admin.balance | number:'1.0-0' }}</div>
+    </div>
+  </header>
+
+  <!-- Title -->
+  <h1 class="page-title">Menu Admin</h1>
+
+  <!-- Tiles -->
+  <section class="tile-grid">
+    <button
+      class="tile"
+      *ngFor="let t of tiles"
+      [class.disabled]="t.disabled"
+      (click)="go(t)"
+      type="button"
+    >
+      <div class="tile-icon">
+        <img [src]="t.icon" alt="" />
+      </div>
+      <div class="tile-title">{{ t.title }}</div>
+      <div class="tile-sub" *ngIf="t.subtitle">{{ t.subtitle }}</div>
+    </button>
+  </section>
+</div>

@@ -45,7 +45,7 @@ export class EditProfile implements OnInit {
       return;
     }
 
-    this.http.put(`http://localhost:3000/profile/${this.user.id}`, {
+    this.http.put(`http://localhost:3200/profile/${this.user.id}`, {
       name: this.user.name,
       email: this.user.email,
       profileImage: this.user.profileImage

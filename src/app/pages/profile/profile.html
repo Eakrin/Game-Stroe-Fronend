@@ -1,6 +1,6 @@
+<!-- profile.html -->
 <div class="profile-container" *ngIf="!loading; else loadingTpl">
   <div class="profile-box">
-    <!-- ส่วนหัวโปรไฟล์ -->
     <div class="profile-header">
       <div class="avatar-wrap">
         <img *ngIf="user?.profileImage" [src]="user.profileImage" alt="avatar" />
@@ -23,7 +23,7 @@
         </div>
         <div class="row">
           <div class="label">Balance</div>
-          <div class="value">{{ user?.balance || 0 | currency:'THB':'symbol':'1.0-0' }}</div>
+          <div class="value">{{ balance | currency:'THB':'symbol':'1.0-0' }}</div>
         </div>
       </div>
 
@@ -31,15 +31,13 @@
         <button class="chip" (click)="goTopup()">เติมเงิน</button>
         <button class="chip" (click)="goPurchaseHistory()">ประวัติการซื้อ</button>
         <button class="chip" (click)="goTopupHistory()">ประวัติการเติมเงิน</button>
+        <button class="chip" (click)="goLibrary()">คลังเกมของฉัน</button>
         <button class="chip primary" (click)="openEditProfile()">แก้ไขข้อมูล</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 🔄 Loading Template -->
 <ng-template #loadingTpl>
-  <div class="loading">
-    <p>⏳ กำลังโหลดข้อมูลโปรไฟล์...</p>
-  </div>
+  <div class="loading"><p>⏳ กำลังโหลดข้อมูลโปรไฟล์...</p></div>
 </ng-template>

@@ -1,0 +1,44 @@
+<div class="history-wrap" *ngIf="!loading; else loadingTpl">
+  <div class="head-row">
+    <h2 class="title">ประวัติการซื้อ <span class="muted">({{ items.length }} รายการ)</span></h2>
+
+    <div class="filters">
+      <button class="pill" [class.active]="filter==='all'" (click)="setFilter('all')">ทั้งหมด</button>
+      <button class="pill" [class.active]="filter==='month'" (click)="setFilter('month')">เดือนนี้</button>
+      <button class="pill" [class.active]="filter==='3m'" (click)="setFilter('3m')">3 เดือน</button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="view.length; else emptyTpl">
+    <div class="list">
+      <div class="tx-card" *ngFor="let t of view; trackBy: trackById">
+        <div class="icon">🕹️</div>
+
+        <div class="mid">
+          <div class="row1">
+            <span class="badge badge-blue">ซื้อเกม</span>
+          </div>
+          <div class="row2">{{ t.detail || 'ซื้อเกม' }}</div>
+        </div>
+
+        <div class="right">
+          <div class="amount minus">-{{ t.amount | number:'1.0-0' }} ฿</div>
+          <div class="status">สำเร็จ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="label">รวมที่ใช้ไป:</div>
+      <div class="total">-{{ totalSpent | number:'1.0-0' }} ฿</div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">⏳ กำลังโหลดประวัติการซื้อ...</div>
+</ng-template>
+
+<ng-template #emptyTpl>
+  <div class="empty">ยังไม่มีประวัติการซื้อ</div>
+</ng-template>

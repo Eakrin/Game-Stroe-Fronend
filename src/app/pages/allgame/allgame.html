@@ -1,0 +1,106 @@
+<div class="container">
+  <!-- จุดตกแต่ง -->
+  <div class="decorative-dots" aria-hidden="true">
+    <span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="logo-container">
+      <img src="/images/Logo.png" alt="TopUpStation" class="logo" />
+    </div>
+    <h1 class="title">TopUpStation</h1>
+    <p class="subtitle">บริการขายเกมทุกแนว</p>
+    <p class="description">พร้อมให้คุณสนุกทุกเวลา</p>
+
+    <!-- Search -->
+    <div class="search">
+      <input
+        type="text"
+        [(ngModel)]="keyword"
+        placeholder="ค้นหาเกมหรือประเภท..."
+        aria-label="ค้นหาเกม"
+      />
+      <span class="result-count">ผลลัพธ์: {{ filteredGames.length }}</span>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">กำลังโหลด…</div>
+
+  <!-- Ranking -->
+  <section class="ranking-section" *ngIf="!loading && filteredTop.length">
+    <h2 class="section-title">Ranking</h2>
+    <div class="game-grid">
+      <button
+        class="game-card"
+        *ngFor="let game of filteredTop; trackBy: trackById"
+        type="button"
+        (click)="goDetail(game)"
+        [attr.aria-label]="'ดูรายละเอียด ' + (game?.name || 'เกม')"
+      >
+        <div class="game-icon">
+          <img
+            [src]="game?.imageUrl || '/images/true.png'"
+            [alt]="game?.name || 'game cover'"
+            loading="lazy"
+          />
+        </div>
+        <div class="game-name">
+          {{ game?.name }}
+        </div>
+        <div class="game-status">
+          {{ game?.category || 'ไม่ระบุประเภท' }}
+          <span *ngIf="game?.price !== undefined">• {{ game?.price | number:'1.0-0' }} ฿</span>
+          <br />
+      <small class="date" *ngIf="game?.releaseDate">
+  วางขาย: {{ game!.releaseDate | date:'dd/MM/yyyy' }}
+</small>
+
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <!-- All Game -->
+  <section class="ranking-section" *ngIf="!loading">
+    <h2 class="section-title">All game</h2>
+
+    <div class="game-grid">
+      <button
+        class="game-card"
+        *ngFor="let game of filteredGames; trackBy: trackById"
+        type="button"
+        (click)="goDetail(game)"
+        [attr.aria-label]="'ดูรายละเอียด ' + (game?.name || 'เกม')"
+      >
+        <div class="game-icon">
+          <img
+            [src]="game?.imageUrl || '/images/true.png'"
+            [alt]="game?.name || 'game cover'"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="game-name">
+          {{ game?.name }}
+        </div>
+
+        <div class="game-status">
+          {{ game?.category || 'ไม่ระบุประเภท' }}
+          <span *ngIf="game?.price !== undefined">• {{ game?.price | number:'1.0-0' }} ฿</span>
+          <br />
+    <small class="date" *ngIf="game?.releaseDate">
+  วางขาย: {{ game!.releaseDate | date:'dd/MM/yyyy' }}
+</small>
+        </div>
+      </button>
+    </div>
+
+    <div *ngIf="filteredGames.length === 0" class="empty">
+      ยังไม่พบเกมที่ตรงกับคำค้นหา
+    </div>
+  </section>
+</div>

@@ -10,7 +10,7 @@
     <!-- เมนู -->
     <ul class="menu">
       <li><a href="#">หน้าแรก</a></li>
-      <li><a href="#">เกมทั้งหมด</a></li>
+      <li><a href="/allgame">เกมทั้งหมด</a></li>
       <li><a href="/profile">โปรไฟล์</a></li>
       <li><a href="/register">สมัครสมาชิก</a></li>
     </ul>
@@ -23,8 +23,19 @@
         </svg>
         <input class="search-input" type="search" placeholder="ค้นหา..." />
       </label>
+
+       <!-- ปุ่มรถเข็น -->
+<button class="btn-cart" type="button" (click)="goCart()" aria-label="รถเข็น">
+  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" class="icon">
+    <path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 .001 3.999A2 2 0 0 0 17 18ZM6.2 4l.3 2h13.3l-1.4 7H8.1l-.3-1.5h-2L7 17h11a1 1 0 0 0 .98-.804l1.8-9A1 1 0 0 0 19.8 5H6.7L6.5 3.9A1 1 0 0 0 5.5 3H3v2h2l1.2-.0Z" fill="currentColor"/>
+  </svg>
+  รถเข็น
+  <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+</button>
    <button class="btn-login" (click)="goLogin()">เข้าสู่ระบบ</button>
    <button class="btn-login" (click)="goLogout()">ออกจากระบบ</button>
     </div>
   </div>
+
+  
 </header>

@@ -1,0 +1,67 @@
+<div class="lib-page" [class.loading]="loading">
+  <header class="lib-head">
+    <h1 class="title">คลังเกมของฉัน</h1>
+    <div class="meta">ทั้งหมด {{ view.length }} รายการ</div>
+  </header>
+
+  <!-- แถบค้นหา/กรอง -->
+  <section class="toolbar">
+    <div class="search">
+      <input
+        type="text"
+        placeholder="ค้นหาเกมหรือประเภท..."
+        [(ngModel)]="q"
+        (input)="apply()" />
+      <button class="clear" *ngIf="q" (click)="clearSearch()">✕</button>
+    </div>
+
+    <select class="select" [(ngModel)]="cat" (change)="apply()">
+      <option *ngFor="let c of categories" [value]="c">
+        {{ c === 'all' ? 'ทุกประเภท' : c }}
+      </option>
+    </select>
+
+    <select class="select" [(ngModel)]="sort" (change)="apply()">
+      <option value="recent">ล่าสุดก่อน</option>
+      <option value="price-asc">ราคาต่ำ→สูง</option>
+      <option value="price-desc">ราคาสูง→ต่ำ</option>
+      <option value="name">ชื่อ A→Z</option>
+    </select>
+  </section>
+
+  <!-- Grid รายการ -->
+  <section class="grid" *ngIf="!loading && view.length; else emptyTpl">
+    <article class="card" *ngFor="let g of view; trackBy: trackById">
+      <div class="thumb">
+        <img [src]="g.imageUrl || '/images/true.png'" [alt]="g.name" />
+      </div>
+
+      <div class="info">
+        <div class="row1">
+          <h3 class="name">{{ g.name }}</h3>
+          <span class="badge" *ngIf="g.category">{{ g.category }}</span>
+        </div>
+
+        <div class="row2">
+          <div class="price">{{ g.price | number:'1.0-0' }} ฿</div>
+          <div class="date" *ngIf="g.purchasedAt">
+            ซื้อเมื่อ {{ g.purchasedAt | date:'dd/MM/yyyy' }}
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" (click)="open(g)">ดูรายละเอียด</button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <ng-template #emptyTpl>
+    <div class="empty" *ngIf="!loading">
+      <h3>ยังไม่มีเกมในคลัง</h3>
+      <a routerLink="/allgame" class="cta">ไปเลือกเกม</a>
+    </div>
+  </ng-template>
+
+  <div class="loading-note" *ngIf="loading">กำลังโหลด…</div>
+</div>

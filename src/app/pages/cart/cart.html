@@ -1,0 +1,67 @@
+<div class="cart-page" [class.loading]="loading">
+  <!-- รายการสินค้า -->
+  <div class="list" *ngIf="items.length; else empty">
+    <div class="card" *ngFor="let it of items">
+      <div class="left">
+        <img *ngIf="it.imageUrl" [src]="it.imageUrl" [alt]="it.name" />
+        <div class="title">{{ it.name }}</div>
+      </div>
+
+      <div class="center">
+        <div class="qty">
+          <button class="btn" (click)="inc(it)">+</button>
+          <span class="count">{{ it.qty }}</span>
+          <button class="btn" (click)="dec(it)" [disabled]="it.qty <= 1">-</button>
+        </div>
+      </div>
+
+      <div class="right">
+        <span class="price-label">Price :</span>
+        <span class="price-value">{{ it.price | number:'1.0-0' }}</span>
+        <button class="remove" (click)="removeAll(it)">ลบทั้งหมด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- สรุปยอด / โค้ดส่วนลด -->
+  <div class="summary" *ngIf="items.length">
+    <label class="coupon-label">
+      กรอกโค้ดส่วนลด <span class="req">*</span>
+    </label>
+
+    <div class="coupon-row">
+      <input
+        class="coupon-input"
+        type="text"
+        placeholder="เช่น TOPUP10"
+        [(ngModel)]="coupon"
+      />
+      <button class="btn-apply" (click)="applyCoupon()">ใช้โค้ด</button>
+
+      <div class="discount-box">
+        <div class="line">
+          <span>ส่วนลด</span>
+          <strong>{{ discountPercent }}%</strong>
+        </div>
+        <div class="line muted" *ngIf="discountPercent > 0">
+          - {{ discountAmount | number:'1.0-0' }}
+        </div>
+      </div>
+
+      <div class="total-box">
+        <div class="total-label">ราคารวม :</div>
+        <div class="total-value">{{ total | number:'1.0-0' }}</div>
+      </div>
+
+      <button class="btn-pay" (click)="checkout()">ชำระเงิน</button>
+    </div>
+  </div>
+
+  <!-- ว่างเปล่า -->
+  <ng-template #empty>
+    <section class="cart-empty">
+      <h2>รถเข็นว่างเปล่า</h2>
+      <a routerLink="/allgame" class="go-shop">ไปเลือกเกม</a>
+    </section>
+  </ng-template>
+</div>
