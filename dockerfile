@@ -1,13 +1,19 @@
 # Stage 1: build the Angular app
 FROM node:20 AS build
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm install
+RUN npm ci --legacy-peer-deps
+
 COPY . .
-RUN npm run build --configuration production
+
+# ✅ Build Angular (ระบุ config ให้ถูก)
+RUN npm run build -- --configuration=production
 
 # Stage 2: serve with nginx
 FROM nginx:alpine
-COPY --from=build /app/dist/my-angular-app /usr/share/nginx/html
+# ✅ ตรวจสอบชื่อโฟลเดอร์ dist ให้ตรงกับ angular.json
+COPY --from=build /app/dist/Gamestore /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
