@@ -34,7 +34,7 @@ export class Register {
     }
 
     // ✅ ส่งข้อมูลไปที่ Node.js Backend
-    this.http.post('http://localhost:3200/register', {
+    this.http.post('https://game-store-pfns.onrender.com/register', {
       name: this.formData.name,
       email: this.formData.email,
       password: this.formData.password,
