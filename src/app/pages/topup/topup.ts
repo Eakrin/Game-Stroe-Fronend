@@ -13,7 +13,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
   styleUrls: ['./topup.scss'],
 })
 export class Topup {
-  private baseUrl = 'http://localhost:3200';
+  private baseUrl = 'https://game-store-pfns.onrender.com';
 
   wallet = { name: 'True Money Wallet', number: '084 321 9436', owner: 'นาย สมสุข จิกกะดุ๊ย' };
 

@@ -25,7 +25,7 @@ type LibraryItem = {
   styleUrls: ['./library.scss'],
 })
 export class Library implements OnInit {
-  private baseUrl = 'http://localhost:3200';
+  private baseUrl = 'https://game-store-pfns.onrender.com';
 
   loading = true;
   items: LibraryItem[] = [];
@@ -36,6 +36,12 @@ export class Library implements OnInit {
   cat = 'all';
   sort: 'recent' | 'price-asc' | 'price-desc' | 'name' = 'recent';
   categories: string[] = [];
+
+  // ⬅ เพิ่มใหม่: สถานะ Modal “รายละเอียดเกม”
+  detailOpen = false;
+  detailLoading = false;
+  detailError: string | null = null;
+  detailData: any = null;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -105,7 +111,34 @@ export class Library implements OnInit {
     if (!it?.gameId) return;
     this.router.navigate(['/games', it.gameId]).catch(() => {});
   }
-  
+
+  // ⬅ เพิ่มใหม่: เปิด Modal + โหลดรายละเอียด
+  openDetail(it: LibraryItem) {
+    if (!it?.gameId) return;
+    this.detailOpen = true;
+    this.detailLoading = true;
+    this.detailError = null;
+    this.detailData = null;
+
+    this.http.get<any>(`${this.baseUrl}/user_library/detail/${it.gameId}`).subscribe({
+      next: (res) => {
+        this.detailData = res?.game ?? null;
+      },
+      error: (e) => {
+        console.error(e);
+        this.detailError = e?.error?.message || 'โหลดรายละเอียดไม่สำเร็จ';
+      },
+      complete: () => (this.detailLoading = false),
+    });
+  }
+
+  // ⬅ เพิ่มใหม่: ปิด Modal
+  closeDetail() {
+    this.detailOpen = false;
+    this.detailLoading = false;
+    this.detailError = null;
+    this.detailData = null;
+  }
 
   /** ใช้กับ *ngFor เพื่อ performance */
   trackById = (_: number, it: LibraryItem) => it.gameId;

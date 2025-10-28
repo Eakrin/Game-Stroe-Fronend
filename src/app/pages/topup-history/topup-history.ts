@@ -21,7 +21,7 @@ type Tx = {
   styleUrls: ['./topup-history.scss'],
 })
 export class TopupHistory implements OnInit {
-  private baseUrl = 'http://localhost:3200';
+  private baseUrl = 'https://game-store-pfns.onrender.com';
 
   loading = true;
   items: Tx[] = [];

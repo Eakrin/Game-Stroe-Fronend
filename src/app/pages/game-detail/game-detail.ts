@@ -23,7 +23,7 @@ type Game = {
   styleUrls: ['./game-detail.scss']
 })
 export class GameDetail implements OnInit {
-  private baseUrl = 'http://localhost:3200'; // ← เปลี่ยนให้ตรงเซิร์ฟเวอร์คุณ
+  private baseUrl = 'https://game-store-pfns.onrender.com'; // ← เปลี่ยนให้ตรงเซิร์ฟเวอร์คุณ
 
   loading = true;
   buying  = false;
@@ -78,10 +78,11 @@ export class GameDetail implements OnInit {
     this.buying = true;
     try {
       const res: any = await this.http.post(`${this.baseUrl}/wallet_purchase`, {
-        userId,
-        gameName: game.name,
-        amount
-      }).toPromise();
+  userId,
+  gameId: game.id,          // ⬅️ เพิ่ม
+  gameName: game.name,
+  amount
+}).toPromise();
 
       // อัปเดต balance ใน localStorage + broadcast event (ถ้ามี header ฟังอยู่)
       const newBal = Number(res?.balance ?? res?.balanceAfter ?? NaN);
@@ -92,7 +93,7 @@ export class GameDetail implements OnInit {
       }
 
       alert(res?.message || 'ซื้อเกมสำเร็จ');
-      this.router.navigate(['/profile']).catch(() => {});
+      this.router.navigate(['/library']).catch(() => {});
     } catch (err: any) {
       console.error('purchase error', err);
       alert(err?.error?.message || 'ซื้อเกมไม่สำเร็จ');

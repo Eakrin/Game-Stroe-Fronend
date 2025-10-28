@@ -24,7 +24,7 @@ type Game = {
   styleUrls: ['./gameadmin.scss']
 })
 export class Gameadmin implements OnInit {
-  private baseUrl = 'http://localhost:3200';
+  private baseUrl = 'https://game-store-pfns.onrender.com';
 
   games: Game[] = [];
   loading = false;

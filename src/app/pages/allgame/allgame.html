@@ -30,17 +30,21 @@
   <!-- Loading -->
   <div *ngIf="loading" class="loading">กำลังโหลด…</div>
 
-  <!-- Ranking -->
-  <section class="ranking-section" *ngIf="!loading && filteredTop.length">
-    <h2 class="section-title">Ranking</h2>
+  <!-- Ranking (จากยอดขายจริง) -->
+  <section class="ranking-section" *ngIf="!loading && displayedTop.length">
+    <h2 class="section-title">🎯 การจัดอันดับเกมขายดี</h2>
     <div class="game-grid">
       <button
         class="game-card"
-        *ngFor="let game of filteredTop; trackBy: trackById"
+        *ngFor="let game of displayedTop; index as i; trackBy: trackById"
         type="button"
         (click)="goDetail(game)"
+        [ngClass]="{'gold': i===0, 'silver': i===1, 'bronze': i===2}"
         [attr.aria-label]="'ดูรายละเอียด ' + (game?.name || 'เกม')"
       >
+        <!-- เลขอันดับ -->
+        <div class="rank-number">#{{ i + 1 }}</div>
+
         <div class="game-icon">
           <img
             [src]="game?.imageUrl || '/images/true.png'"
@@ -55,10 +59,9 @@
           {{ game?.category || 'ไม่ระบุประเภท' }}
           <span *ngIf="game?.price !== undefined">• {{ game?.price | number:'1.0-0' }} ฿</span>
           <br />
-      <small class="date" *ngIf="game?.releaseDate">
-  วางขาย: {{ game!.releaseDate | date:'dd/MM/yyyy' }}
-</small>
-
+          <small class="date" *ngIf="game?.releaseDate">
+            วางขาย: {{ game!.releaseDate | date:'dd/MM/yyyy' }}
+          </small>
         </div>
       </button>
     </div>
@@ -92,9 +95,9 @@
           {{ game?.category || 'ไม่ระบุประเภท' }}
           <span *ngIf="game?.price !== undefined">• {{ game?.price | number:'1.0-0' }} ฿</span>
           <br />
-    <small class="date" *ngIf="game?.releaseDate">
-  วางขาย: {{ game!.releaseDate | date:'dd/MM/yyyy' }}
-</small>
+          <small class="date" *ngIf="game?.releaseDate">
+            วางขาย: {{ game!.releaseDate | date:'dd/MM/yyyy' }}
+          </small>
         </div>
       </button>
     </div>

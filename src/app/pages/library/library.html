@@ -1,4 +1,6 @@
-<div class="lib-page" [class.loading]="loading">
+<div class="lib-page"
+     [class.loading]="loading"
+     [class.noscroll]="detailOpen">
   <header class="lib-head">
     <h1 class="title">คลังเกมของฉัน</h1>
     <div class="meta">ทั้งหมด {{ view.length }} รายการ</div>
@@ -11,17 +13,18 @@
         type="text"
         placeholder="ค้นหาเกมหรือประเภท..."
         [(ngModel)]="q"
-        (input)="apply()" />
-      <button class="clear" *ngIf="q" (click)="clearSearch()">✕</button>
+        (input)="apply()"
+        (keyup.enter)="apply()" />
+      <button class="clear" *ngIf="q" (click)="clearSearch()" aria-label="ล้างการค้นหา">✕</button>
     </div>
 
-    <select class="select" [(ngModel)]="cat" (change)="apply()">
+    <select class="select" [(ngModel)]="cat" (change)="apply()" aria-label="เลือกหมวดหมู่">
       <option *ngFor="let c of categories" [value]="c">
         {{ c === 'all' ? 'ทุกประเภท' : c }}
       </option>
     </select>
 
-    <select class="select" [(ngModel)]="sort" (change)="apply()">
+    <select class="select" [(ngModel)]="sort" (change)="apply()" aria-label="เรียงตาม">
       <option value="recent">ล่าสุดก่อน</option>
       <option value="price-asc">ราคาต่ำ→สูง</option>
       <option value="price-desc">ราคาสูง→ต่ำ</option>
@@ -31,14 +34,14 @@
 
   <!-- Grid รายการ -->
   <section class="grid" *ngIf="!loading && view.length; else emptyTpl">
-    <article class="card" *ngFor="let g of view; trackBy: trackById">
+    <article class="card" *ngFor="let g of view; trackBy: trackById" (click)="openDetail(g)">
       <div class="thumb">
-        <img [src]="g.imageUrl || '/images/true.png'" [alt]="g.name" />
+        <img [src]="g.imageUrl || 'assets/images/placeholder-game.jpg'" [alt]="g.name" loading="lazy" />
       </div>
 
       <div class="info">
         <div class="row1">
-          <h3 class="name">{{ g.name }}</h3>
+          <h3 class="name" [title]="g.name">{{ g.name }}</h3>
           <span class="badge" *ngIf="g.category">{{ g.category }}</span>
         </div>
 
@@ -49,8 +52,9 @@
           </div>
         </div>
 
-        <div class="actions">
-          <button class="btn" (click)="open(g)">ดูรายละเอียด</button>
+        <div class="actions" (click)="$event.stopPropagation()">
+          <button class="btn" (click)="openDetail(g)">รายละเอียด</button>
+          <button class="btn ghost" (click)="open(g)">ไปหน้าเกม</button>
         </div>
       </div>
     </article>
@@ -64,4 +68,63 @@
   </ng-template>
 
   <div class="loading-note" *ngIf="loading">กำลังโหลด…</div>
+</div>
+
+<!-- ===== Modal รายละเอียดเกม ===== -->
+<div class="modal-backdrop" [class.show]="detailOpen" (click)="closeDetail()"></div>
+
+<div class="modal" [class.show]="detailOpen" role="dialog" aria-modal="true" (click)="closeDetail()">
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>รายละเอียดเกม</h2>
+      <button class="icon-btn" (click)="closeDetail()" aria-label="ปิด">✕</button>
+    </div>
+
+    <div class="modal-body" *ngIf="detailLoading">
+      <div class="spinner"></div>
+      <p>กำลังโหลดรายละเอียด...</p>
+    </div>
+
+    <div class="modal-body error" *ngIf="!detailLoading && detailError">
+      <p>❌ {{ detailError }}</p>
+    </div>
+
+    <div class="modal-body" *ngIf="!detailLoading && !detailError && detailData">
+      <div class="detail">
+        <div class="cover">
+          <img
+            [src]="detailData.imageUrl || 'assets/images/placeholder-game.jpg'"
+            [alt]="detailData.name" />
+        </div>
+
+        <div class="info">
+          <h3 class="title">{{ detailData.name }}</h3>
+
+          <div class="rows">
+            <div class="row">
+              <span class="label">ราคา</span>
+              <span class="value">{{ detailData.price | number:'1.0-0' }} ฿</span>
+            </div>
+            <div class="row" *ngIf="detailData.category">
+              <span class="label">หมวดหมู่</span>
+              <span class="value">{{ detailData.category }}</span>
+            </div>
+            <div class="row" *ngIf="detailData.releaseDate">
+              <span class="label">วางจำหน่าย</span>
+              <span class="value">{{ detailData.releaseDate | date:'mediumDate' }}</span>
+            </div>
+          </div>
+
+          <div class="desc" *ngIf="detailData.description">
+            <h4>รายละเอียด</h4>
+            <p>{{ detailData.description }}</p>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn ghost" (click)="closeDetail()">ปิด</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

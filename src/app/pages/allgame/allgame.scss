@@ -8,14 +8,10 @@
   background:
     radial-gradient(1200px 600px at 20% -10%, #372668 0%, #1b1236 45%, #120a26 100%),
     url('/images/Bg.png') center/cover no-repeat fixed;
-  /* ทำให้ ::before อยู่ในสแต็กเดียวกันเสมอ */
-  isolation: isolate;    /* สำคัญมาก */
+  isolation: isolate; /* สำคัญมาก */
 }
 .container::before{
-  content:'';
-  position:absolute; inset:0;
-  background:rgba(20,16,35,.78);
-  z-index:0;
+  content:''; position:absolute; inset:0; background:rgba(20,16,35,.78); z-index:0;
 }
 
 /* คอนเทนต์ต้องอยู่เหนือเลเยอร์ */
@@ -30,9 +26,7 @@
 
 /* ===== HERO ===== */
 .hero {
-  text-align: center;
-  padding: 24px 12px 10px;
-
+  text-align: center; padding: 24px 12px 10px;
   .logo { width:140px; height:auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,.35)); }
   .title { margin-top:10px; font-size:44px; font-weight:800; color:#fff; letter-spacing:.5px; text-shadow:0 4px 28px rgba(0,0,0,.35); }
   .subtitle { color:#e8e6ff; opacity:.95; margin-top:6px; }
@@ -72,6 +66,7 @@
   }
 
   .game-card{
+    position: relative; /* ให้ rank-number วางทับได้ */
     appearance:none; border:0; text-align:left; cursor:pointer;
     background:rgba(255,255,255,.06);
     border:1px solid rgba(255,255,255,.12);
@@ -89,6 +84,20 @@
     .game-status{ margin-top:4px; font-size:13px; color:#c9c7df; }
   }
 }
+
+/* แถบแสดงเลขลำดับ */
+.rank-number{
+  position:absolute; top:8px; left:8px;
+  background: linear-gradient(135deg, #8b5cf6, #43e97b);
+  color:#fff; font-weight:800; font-size:16px;
+  border-radius:8px; padding:4px 10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.3); z-index:2;
+}
+
+/* สีพิเศษสำหรับ 3 อันดับแรก */
+.game-card.gold   { border-color:#FFD54F; box-shadow:0 0 0 2px rgba(255,213,79,.35), 0 12px 28px rgba(255,213,79,.20); }
+.game-card.silver { border-color:#B0BEC5; box-shadow:0 0 0 2px rgba(176,190,197,.35), 0 12px 28px rgba(176,190,197,.20); }
+.game-card.bronze { border-color:#FFB74D; box-shadow:0 0 0 2px rgba(255,183,77,.35), 0 12px 28px rgba(255,183,77,.20); }
 
 /* ไม่มีผลลัพธ์ */
 .empty{ color:#fff; opacity:.9; text-align:center; margin:16px 0 8px; }

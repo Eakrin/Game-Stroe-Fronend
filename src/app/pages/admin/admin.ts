@@ -29,8 +29,7 @@ tiles: AdminTile[] = [
   { title: 'จัดการเกม',       icon: '/images/Logo.png', route: 'admin/admingames' },
   { title: 'จัดอันดับ',        icon: '/images/true.png', disabled: true },
   { title: 'ธุรกรรมของผู้ใช้',  icon: '/images/Donors.jpg', route: '/admin/transactions' },
-  { title: 'ส่วนลด',           icon: '/images/Avata.png', disabled: true },
-  { title: 'ส่วนลดทั้งหมด',     icon: '/images/Avata.png', disabled: true },
+  { title: 'ส่วนลด',           icon: '/images/Avata.png', route: '/admin/discounts' }, // ✅
 ];
 
 

@@ -25,7 +25,7 @@ type UserItem = { id: string; name?: string; email?: string };
   styleUrls: ['./admin-transactions.scss'],
 })
 export class AdminTransactions implements OnInit {
-  private baseUrl = 'http://localhost:3200';
+  private baseUrl = 'https://game-store-pfns.onrender.com';
 
   loading = true;
   all: Tx[] = [];
@@ -115,7 +115,7 @@ export class AdminTransactions implements OnInit {
   typeLabel(t: string) {
     if (t === 'topup') return 'เติมเงิน';
     if (t === 'purchase') return 'ซื้อเกม';
-    if (t === 'withdraw') return 'ถอนเงิน';
+    if (t === 'withdraw') return 'ซื้อเกม';
     return t;
   }
 

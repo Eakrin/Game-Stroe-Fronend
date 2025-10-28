@@ -45,7 +45,7 @@ export class EditProfile implements OnInit {
       return;
     }
 
-    this.http.put(`http://localhost:3200/profile/${this.user.id}`, {
+    this.http.put(`https://game-store-pfns.onrender.com/profile/${this.user.id}`, {
       name: this.user.name,
       email: this.user.email,
       profileImage: this.user.profileImage

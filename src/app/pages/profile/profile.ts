@@ -15,7 +15,7 @@ type Game = { id: number; title: string; cover: string };
   styleUrls: ['./profile.scss'],
 })
 export class Profile implements OnInit {
-  private baseUrl = 'http://localhost:3200';
+  private baseUrl = 'https://game-store-pfns.onrender.com';
 
   user: any = null;
   loading = true;

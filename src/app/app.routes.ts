@@ -15,6 +15,7 @@ import { PurchaseHistory } from './pages/purchase-history/purchase-history';
 import { AdminTransactions } from './pages/admin-transactions/admin-transactions';
 import { Cart } from './pages/cart/cart';
 import { Library } from './pages/library/library';
+import { AdminDiscounts } from './pages/admin-discounts/admin-discounts';
 
 
 
@@ -35,6 +36,7 @@ export const routes: Routes = [
      {path: 'admin/transactions', component: AdminTransactions},
      {path: 'cart', component: Cart},
      {path: 'profile/library', component: Library},
+     {path: 'admin/discounts', component:AdminDiscounts },
 
 
 ];

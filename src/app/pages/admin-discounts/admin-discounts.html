@@ -1,0 +1,97 @@
+<div class="page">
+  <h1>จัดการโค้ดส่วนลด</h1>
+
+  <div class="toolbar">
+    <button class="btn" (click)="openCreate()">+ สร้างโค้ด</button>
+    <span class="note" *ngIf="loading">กำลังโหลด…</span>
+  </div>
+
+  <table class="tbl" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>ประเภท</th>
+        <th>ค่า</th>
+        <th>ขั้นต่ำ</th>
+        <th>ใช้/ทั้งหมด</th>
+        <th>Limit/คน</th>
+        <th>สถานะ</th>
+        <th style="width:160px">จัดการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of items; trackBy: trackById">
+        <td><b>{{ d.code }}</b></td>
+        <td>{{ d.type === 'percent' ? '%' : '฿' }}</td>
+        <td>{{ d.value }}</td>
+        <td>{{ d.minSpend || 0 }}</td>
+        <td>{{ d.usedCount || 0 }}/{{ d.maxUses || 0 }}</td>
+        <td>{{ d.perUserLimit || 1 }}</td>
+        <td>
+          <span class="badge" [class.bad]="!d.active">
+            {{ d.active ? 'Active' : 'Disabled' }}
+          </span>
+        </td>
+        <td>
+          <button class="btn sm" (click)="openEdit(d)">แก้ไข</button>
+          <button class="btn sm danger" (click)="remove(d)">ลบ</button>
+        </td>
+      </tr>
+      <tr *ngIf="items.length === 0">
+        <td colspan="8" class="note">ยังไม่มีโค้ด</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Drawer -->
+  <div class="drawer" *ngIf="form">
+    <div class="card" (click)="$event.stopPropagation()">
+      <h3>{{ editing ? 'แก้ไขโค้ด' : 'สร้างโค้ดใหม่' }}</h3>
+
+      <div class="grid">
+        <label>Code
+          <input [(ngModel)]="form.code" placeholder="เช่น WELCOME10" />
+        </label>
+
+        <label>ประเภท
+          <select [(ngModel)]="form.type">
+            <option value="percent">% (ตามยอด)</option>
+            <option value="amount">฿ (กำหนดตายตัว)</option>
+          </select>
+        </label>
+
+        <label>ค่า
+          <input type="number" [(ngModel)]="form.value" />
+        </label>
+
+        <label>ยอดขั้นต่ำ (฿)
+          <input type="number" [(ngModel)]="form.minSpend" />
+        </label>
+
+        <label>จำนวนครั้งรวม
+          <input type="number" [(ngModel)]="form.maxUses" />
+        </label>
+
+        <label>จำกัดต่อคน
+          <input type="number" [(ngModel)]="form.perUserLimit" />
+        </label>
+
+        <label>สถานะ
+          <select [(ngModel)]="form.active">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Disabled</option>
+          </select>
+        </label>
+
+        <label class="full">หมายเหตุ
+          <textarea [(ngModel)]="form.note"></textarea>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn" (click)="save()">บันทึก</button>
+        <button class="btn ghost" (click)="close()">ปิด</button>
+      </div>
+    </div>
+  </div>
+</div>

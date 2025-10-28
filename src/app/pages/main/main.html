@@ -9,53 +9,42 @@
     <p class="subtitle">พร้อมให้คุณลุยทุกเวลา</p>
     <br>
     <div class="search-box">
-      <button class="btn-all-games" >เกมทั้งหมด</button>
+      <button class="btn-all-games" type="button" (click)="goAllGames()">เกมทั้งหมด</button>
     </div>
   </section>
 
-  <!-- Ranking Section -->
-  <section class="ranking-section">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">กำลังโหลด…</div>
+
+  <!-- Ranking Section (ยอดขายจริง) -->
+  <section class="ranking-section" *ngIf="!loading && displayedTop.length">
     <h2 class="section-title">Ranking</h2>
     <div class="game-grid">
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/valorant.png" alt="Valorant">
-        </div>
-        <p class="game-name">Valorant</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
+      <button
+        class="game-card"
+        *ngFor="let game of displayedTop; index as i; trackBy: trackById"
+        type="button"
+        (click)="goDetail(game)"
+        [ngClass]="{'gold': i===0, 'silver': i===1, 'bronze': i===2}"
+        [attr.aria-label]="'ดูรายละเอียด ' + (game?.name || 'เกม')"
+      >
+        <!-- เลขอันดับ -->
+        <div class="rank-number">#{{ i + 1 }}</div>
 
-      <div class="game-card">
         <div class="game-icon">
-          <img src="assets/games/cod.png" alt="Call of Duty">
+          <img
+            [src]="game?.imageUrl || 'assets/games/placeholder.png'"
+            [alt]="game?.name || 'game cover'"
+            loading="lazy"
+          />
         </div>
-        <p class="game-name">Call of Duty</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
 
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/fivem.png" alt="Five M">
-        </div>
-        <p class="game-name">Five M</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
-
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/roblox.png" alt="Roblox">
-        </div>
-        <p class="game-name">Roblox</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
-
-      <div class="game-card">
-        <div class="game-icon">
-          <img src="assets/games/reddead2.png" alt="Red Dead II">
-        </div>
-        <p class="game-name">Red Dead II</p>
-        <p class="game-status">ซื้อได้แล้ว</p>
-      </div>
+        <p class="game-name">{{ game?.name }}</p>
+        <p class="game-status">
+          {{ game?.category || 'ไม่ระบุประเภท' }}
+          <span *ngIf="game?.price !== undefined">• {{ game?.price | number:'1.0-0' }} ฿</span>
+        </p>
+      </button>
     </div>
   </section>
 

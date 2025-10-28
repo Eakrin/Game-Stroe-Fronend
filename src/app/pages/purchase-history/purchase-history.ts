@@ -8,10 +8,10 @@ type Tx = {
   id: string;
   userId: string;
   type?: 'topup' | 'purchase' | 'withdraw' | string;
-  amount: number;
+  amount: number;                 // ✅ ยอดสุทธิหลังหักส่วนลด
   detail?: string;
   createdAt?: string | Date | FsTs;
-  createdAtDate?: Date;   // หลังแปลง
+  createdAtDate?: Date;
 };
 
 @Component({
@@ -22,11 +22,11 @@ type Tx = {
   styleUrls: ['./purchase-history.scss']
 })
 export class PurchaseHistory implements OnInit {
-  private baseUrl = 'http://localhost:3200';
+  private baseUrl = 'https://game-store-pfns.onrender.com';
 
   loading = true;
-  items: Tx[] = [];     // ทั้งหมด (เฉพาะที่ถือว่าเป็น "ซื้อ")
-  view: Tx[] = [];      // หลัง filter
+  items: Tx[] = [];
+  view: Tx[] = [];
   totalSpent = 0;
 
   filter: 'all' | 'month' | '3m' = 'all';
@@ -43,21 +43,36 @@ export class PurchaseHistory implements OnInit {
     this.http.get<any>(`${this.baseUrl}/wallet/transactions/${userId}`).subscribe({
       next: (res) => {
         const all = (res?.transactions ?? []).map((t: any) => {
-          // ✅ ตรวจว่าเป็น “ซื้อจากรถเข็น” ไหม (ไม่มี type แต่มี items/totalPrice)
+          // ✅ ถือเป็นการซื้อได้ 2 แบบ: purchase เดิม หรือ checkout (มี items)
           const isCartCheckout = Array.isArray(t?.items) && t?.items.length > 0;
           const isPurchaseType = t?.type === 'purchase';
           const isPurchase = isPurchaseType || isCartCheckout;
 
-          // amount: ถ้าเป็น purchase แบบเก่า ใช้ t.amount / ถ้าเป็น checkout ใช้ totalPrice
-          const amt = isCartCheckout ? Number(t?.totalPrice) || 0 : (Number(t?.amount) || 0);
+          // ✅ เลือกยอดอย่างถูกต้อง: finalPrice > totalPrice > amount
+          const num = (v: any) => (Number.isFinite(Number(v)) ? Number(v) : 0);
+          const rawTotal = num(t?.totalPrice ?? t?.amount);
+          const final = num(t?.finalPrice ?? rawTotal);  // ถ้ามี finalPrice ให้ใช้ก่อน
+          const amt = isCartCheckout ? final : num(t?.amount ?? final);
 
-          // สร้าง detail สวย ๆ ถ้าเป็น checkout
+          // ✅ สร้าง detail และบอกว่าใช้คูปองหรือไม่
           let detail: string | undefined = t?.detail;
+          let usedCoupon = false;
+
           if (isCartCheckout) {
             const names: string[] = (t.items || []).map((i: any) => i?.name).filter(Boolean);
             const head = names.slice(0, 2).join(', ');
             const more = names.length > 2 ? ` +${names.length - 2} เกม` : '';
-            detail = `ซื้อหลายเกม: ${head}${more}`;
+            usedCoupon = Boolean(t?.discountPercent || t?.discount || (final && rawTotal && final < rawTotal));
+
+            const discountPercent =
+              num(t?.discountPercent) || (rawTotal ? Math.round((1 - final / rawTotal) * 100) : 0);
+            const discountBath = num(t?.discount) || (rawTotal - final);
+
+            const suffix = usedCoupon
+              ? ` (ส่วนลด ${discountPercent}% -${discountBath}฿)`
+              : '';
+
+            detail = `ซื้อหลายเกม: ${head}${more}${suffix}`;
           }
 
           const createdAtDate =
@@ -73,19 +88,20 @@ export class PurchaseHistory implements OnInit {
             amount: amt,
             detail,
             createdAt: t?.createdAt,
-            createdAtDate: createdAtDate,
+            createdAtDate
           };
 
-          // ถ้าไม่ใช่การซื้อ (topup/withdraw) ให้คืน object เดิมไว้ก่อน
-          // เดี๋ยวไป filter ต่อข้างล่าง
           (tx as any).__isPurchase = isPurchase;
+          (tx as any).__usedCoupon = usedCoupon;
           return tx;
         });
 
-        // ✅ เก็บเฉพาะที่ถือว่าเป็น "การซื้อ" (ทั้งแบบเดิมและ checkout)
         this.items = all
           .filter((t: any) => t.__isPurchase)
-          .sort((a: { createdAtDate: { getTime: () => any; }; }, b: { createdAtDate: { getTime: () => any; }; }) => (b.createdAtDate?.getTime() ?? 0) - (a.createdAtDate?.getTime() ?? 0));
+          .sort(
+            (a: any, b: any) =>
+              (b.createdAtDate?.getTime?.() ?? 0) - (a.createdAtDate?.getTime?.() ?? 0)
+          );
 
         this.applyFilter();
       },
@@ -93,7 +109,7 @@ export class PurchaseHistory implements OnInit {
         console.error(e);
         alert(e?.error?.message || 'โหลดประวัติการซื้อไม่สำเร็จ');
       },
-      complete: () => this.loading = false
+      complete: () => (this.loading = false),
     });
   }
 
@@ -127,6 +143,7 @@ export class PurchaseHistory implements OnInit {
     if (v instanceof Date) return v;
     if (typeof v?.toDate === 'function') return v.toDate();
     if (typeof v?.seconds === 'number') return new Date(v.seconds * 1000);
-    const d = new Date(v); return isNaN(d.getTime()) ? undefined : d;
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? undefined : d;
   }
 }

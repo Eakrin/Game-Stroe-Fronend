@@ -16,25 +16,37 @@
   <section class="ranking-section">
     <h2 class="section-title">Ranking</h2>
 
-    <div *ngIf="loading" style="color:#fff; opacity:.9; margin:8px 0 18px;">
+    <div *ngIf="loading" class="loading-note">
       กำลังโหลด…
     </div>
 
-    <div class="game-grid" *ngIf="!loading">
+    <div class="game-grid" *ngIf="!loading && top.length">
       <button
         class="game-card"
-        *ngFor="let g of top; trackBy: trackById"
+        *ngFor="let g of top; index as i; trackBy: trackById"
         type="button"
         (click)="goGameDetail(g)"
+        [ngClass]="{'gold': i===0, 'silver': i===1, 'bronze': i===2}"
+        [attr.aria-label]="'ดูรายละเอียด ' + (g?.name || 'เกม')"
       >
+        <!-- อันดับ -->
+        <div class="rank-number">#{{ i + 1 }}</div>
+
         <div class="game-icon">
-          <img [src]="g.imageUrl || '/images/true.png'" [alt]="g.name" />
+          <img [src]="g.imageUrl || '/images/true.png'" [alt]="g.name" loading="lazy" />
         </div>
+
         <p class="game-name">{{ g.name }}</p>
+
         <p class="game-status">
-          
+          {{ g.category || 'ไม่ระบุประเภท' }}
+          <span *ngIf="g.price !== undefined">• {{ g.price | number:'1.0-0' }} ฿</span>
         </p>
       </button>
+    </div>
+
+    <div *ngIf="!loading && !top.length" class="loading-note">
+      ยังไม่มีอันดับขายดีให้แสดง
     </div>
   </section>
 

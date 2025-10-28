@@ -31,7 +31,7 @@ type GroupedItem = {
 })
 export class Cart implements OnInit {
   // TODO: ย้ายไป environment ถ้าไปโปรดักชัน
-  private BASE_URL = 'http://localhost:3200';
+  private BASE_URL = 'https://game-store-pfns.onrender.com';
 
   userId = '';
   items: GroupedItem[] = [];
